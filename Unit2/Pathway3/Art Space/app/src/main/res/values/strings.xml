@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Art Space</string>
+
+    <string name="art_title1">파라솔을 든 여인</string>
+    <string name="art_title2">수련 연못</string>
+    <string name="art_title3">생타드레스의 테라스</string>
+
+    <string name="artist1">Monet (1875)</string>
+    <string name="artist2">Monet (1899)</string>
+    <string name="artist3">Monet (1867)</string>
+</resources>
