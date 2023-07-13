@@ -14,11 +14,29 @@
  * limitations under the License.
  */
 package com.example.affirmationscodelab
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.affirmationscodelab.data.Datasource
+import com.example.affirmationscodelab.ui.model.Affirmation
 import com.example.affirmationscodelab.ui.theme.AffirmationsTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,8 +48,48 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun AffirmationApp() {
     AffirmationsTheme {
+        AffirmationList(affirmationList = Datasource().loadAffirmations())
     }
 }
+
+@Composable
+fun AffirmationList(affirmationList: List<Affirmation>, modifier: Modifier = Modifier) {
+    /*
+        LazyColumn 과 Column 의 차이점
+        Compose가 한번에 모두 로드하기 때문에 표시할 항목이 적은 경우 Column을 사용
+        Column은 사전에 정의된 또는 고정된 개수의 컴포저블만 보유 가능
+        LazyColumn은 목록이 길거나 목록의 길이를 알 수 없을 때 유용
+        그리고 추가적인 코드 없이 기본적으로 스크롤을 제공함
+     */
+    LazyColumn {
+        items(affirmationList) { affirmation ->
+            AffirmationCard(affirmation = affirmation)
+        }
+    }
+}
+
+@Composable
+fun AffirmationCard(affirmation: Affirmation, modifier: Modifier = Modifier) {
+    Card(modifier = modifier.padding(8.dp), elevation = 4.dp) {
+        Column {
+            Image(
+                painter = painterResource(id = affirmation.imgResId),
+                contentDescription = stringResource(id = affirmation.strResId),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(194.dp),
+                contentScale = ContentScale.Crop,
+            )
+            Text(
+                text = stringResource(id = affirmation.strResId),
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.h6
+            )
+        }
+    }
+}
+
