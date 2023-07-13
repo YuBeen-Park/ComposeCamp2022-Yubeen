@@ -1,6 +1,6 @@
 
 ## Compose 내용 정리
-
+- [#1-레이아웃](https://github.com/YuBeen-Park/ComposeCamp2022-Yubeen/blob/unit2-path3/Article/ComposeUI.md)
 
 
 ## 📸 Compose Camp 준비물!
@@ -24,9 +24,5 @@
 - [단원 3 슬라이드](https://speakerdeck.com/yeoncheong/devfest-2022-compose-camp-unit-3)
 - [단원 4 슬라이드](https://speakerdeck.com/jaesungleee/devfest-2022-compose-camp-unit-4)
 
-### 가이드 위키 페이지
-- 깃허브 사용 및 각종 오류 대처를 위한 가이드 페이지입니다.
-- 아래 사진과 같이 'Wiki'탭 클릭!
-![](https://i.imgur.com/hJvdRea.png)
 
 
