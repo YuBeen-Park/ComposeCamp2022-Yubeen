@@ -42,7 +42,7 @@ class GameViewModelTest {
     */
 
     @Test
-    fun gameViewModel_IncorrectGuess_ErrorFlagSet(){
+    fun gameViewModel_IncorrectGuess_ErrorFlagSet() {
         val incorrectPlayerWord = "and"
         viewModel.updateUserGuess(incorrectPlayerWord)
         viewModel.checkUserGuess()
@@ -62,7 +62,7 @@ class GameViewModelTest {
      */
 
     @Test
-    fun gameViewModel_Initialization_FirstWordLoaded(){
+    fun gameViewModel_Initialization_FirstWordLoaded() {
         val gameUiState = viewModel.uiState.value
         val unScrambledWord = getUnscrambledWord(gameUiState.currentScrambledWord)
 
@@ -86,7 +86,7 @@ class GameViewModelTest {
         var expectedScore = 0
         var currentGameUiState = viewModel.uiState.value
         var correctPlayerWord = getUnscrambledWord(currentGameUiState.currentScrambledWord)
-        repeat(MAX_NO_OF_WORDS){
+        repeat(MAX_NO_OF_WORDS) {
             expectedScore += SCORE_INCREASE
             viewModel.updateUserGuess(correctPlayerWord)
             viewModel.checkUserGuess()
@@ -98,7 +98,27 @@ class GameViewModelTest {
         assertTrue(currentGameUiState.isGameOver)
     }
 
-    companion object{
+    /* 사용자가 단어를 건너뛰면 다음 항목이 true임을 확인하는 테스트
+       - currentGameUiState.score 속성 유지
+       - currentGameUiState.currentWordCount 속성이 다음 코드 스니펫과 같이 1씩 증가
+     */
+
+    @Test
+    fun gameViewModel_WordSkipped_ScoreUnchangedAndWordCountIncreased() {
+        var currentGameUiState = viewModel.uiState.value
+        val correctPlayerWord = getUnscrambledWord(currentGameUiState.currentScrambledWord)
+        viewModel.updateUserGuess(correctPlayerWord)
+        viewModel.checkUserGuess()
+
+        currentGameUiState = viewModel.uiState.value
+        val lastWordCount = currentGameUiState.currentWordCount
+        viewModel.skipWord()
+        currentGameUiState = viewModel.uiState.value
+        assertEquals(SCORE_AFTER_FIRST_CORRECT_ANSWER, currentGameUiState.score)
+        assertEquals(lastWordCount + 1, currentGameUiState.currentWordCount)
+    }
+
+    companion object {
         private const val SCORE_AFTER_FIRST_CORRECT_ANSWER = SCORE_INCREASE
     }
 }
