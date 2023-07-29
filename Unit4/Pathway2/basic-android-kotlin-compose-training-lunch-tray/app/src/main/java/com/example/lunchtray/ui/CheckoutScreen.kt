@@ -16,11 +16,7 @@
 package com.example.lunchtray.ui
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -64,18 +60,20 @@ fun CheckoutScreen(
 
         OrderSubCost(
             resourceId = R.string.subtotal,
-            price = orderUiState.itemTotalPrice.formatPrice(),
+            price = orderUiState.itemTotalPrice.toString(),
             Modifier.align(Alignment.End)
         )
 
         OrderSubCost(
             resourceId = R.string.tax,
-            price = orderUiState.orderTax.formatPrice(),
+            price = orderUiState.orderTax.toString(),
             Modifier.align(Alignment.End)
         )
 
         Text(
-            text = stringResource(R.string.total, orderUiState.orderTotalPrice.formatPrice()),
+            text = stringResource(
+                R.string.total, orderUiState.orderTotalPrice.toString()
+            ),
             modifier = Modifier.align(Alignment.End),
             fontWeight = FontWeight.Bold
         )
@@ -85,7 +83,7 @@ fun CheckoutScreen(
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ){
+        ) {
             OutlinedButton(modifier = Modifier.weight(1f), onClick = onCancelButtonClicked) {
                 Text(stringResource(R.string.cancel).uppercase())
             }
