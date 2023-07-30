@@ -17,9 +17,7 @@ package com.example.lunchtray.ui
 
 import androidx.lifecycle.ViewModel
 import com.example.lunchtray.model.MenuItem
-import com.example.lunchtray.model.MenuItem.AccompanimentItem
-import com.example.lunchtray.model.MenuItem.EntreeItem
-import com.example.lunchtray.model.MenuItem.SideDishItem
+import com.example.lunchtray.model.MenuItem.*
 import com.example.lunchtray.model.OrderUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -66,12 +64,9 @@ class OrderViewModel : ViewModel() {
                 orderTotalPrice = itemTotalPrice + tax,
                 entree = if (newItem is EntreeItem) newItem else currentState.entree,
                 sideDish = if (newItem is SideDishItem) newItem else currentState.sideDish,
-                accompaniment = if(newItem is AccompanimentItem) newItem else
+                accompaniment = if (newItem is AccompanimentItem) newItem else
                     currentState.accompaniment
             )
         }
     }
-}
-fun Double.formatPrice(): String {
-    return NumberFormat.getCurrencyInstance().format(this)
 }
