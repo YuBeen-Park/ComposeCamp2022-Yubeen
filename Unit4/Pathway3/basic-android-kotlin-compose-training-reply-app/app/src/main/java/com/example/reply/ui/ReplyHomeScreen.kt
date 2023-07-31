@@ -86,14 +86,24 @@ fun ReplyHomeScreen(
             text = stringResource(id = R.string.tab_spam)
         )
     )
-    ReplyAppContent(
-        replyUiState = replyUiState,
-        onTabPressed = onTabPressed,
-        onEmailCardPressed = onEmailCardPressed,
-        navigationItemContentList = navigationItemContentList,
-        modifier = modifier
+    // replyUiState가 상태 객체이기 때문에
+    // isShowingHomepage 값이 변경되면 ReplyHomeScreen 컴포저블이 재구성된다.
+    if (replyUiState.isShowingHomepage) {
+        ReplyAppContent(
+            replyUiState = replyUiState,
+            onTabPressed = onTabPressed,
+            onEmailCardPressed = onEmailCardPressed,
+            navigationItemContentList = navigationItemContentList,
+            modifier = modifier
 
-    )
+        )
+    } else {
+        ReplyDetailsScreen(
+            replyUiState = replyUiState,
+            onBackPressed = onDetailScreenBackPressed,
+            modifier = modifier
+        )
+    }
 }
 
 /**
