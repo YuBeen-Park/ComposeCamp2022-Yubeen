@@ -21,4 +21,25 @@ class ReplyAppTest {
             com.example.reply.R.string.navigation_bottom
         ).assertExists()
     }
+
+    // 중형 및 확장형 화면 크기 테스트
+    @Test
+    fun mediumDevice_verifyUsingNavigationRail() {
+        composeTestRule.setContent {
+            ReplyApp(windowSize = WindowWidthSizeClass.Medium)
+        }
+        composeTestRule.onNodeWithTagForStringId(
+            com.example.reply.R.string.navigation_rail
+        ).assertExists()
+    }
+
+    @Test
+    fun expandedDevice_verifyUsingNavigationDrawer(){
+        composeTestRule.setContent {
+            ReplyApp(windowSize = WindowWidthSizeClass.Expanded)
+        }
+        composeTestRule.onNodeWithTagForStringId(
+            com.example.reply.R.string.navigation_drawer
+        ).assertExists()
+    }
 }
