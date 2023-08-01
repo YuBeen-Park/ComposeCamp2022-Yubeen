@@ -16,29 +16,23 @@
 
 package com.example.sports.ui
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +42,7 @@ import com.example.sports.R
 import com.example.sports.data.LocalSportsDataProvider
 import com.example.sports.model.Sport
 import com.example.sports.ui.theme.SportsTheme
+import com.example.sports.ui.utils.SportsContentType
 
 /**
  * Main composable that serves as container
@@ -56,36 +51,61 @@ import com.example.sports.ui.theme.SportsTheme
 @Composable
 fun SportsApp(
     modifier: Modifier = Modifier,
+    windowSize: WindowWidthSizeClass,
 ) {
     val viewModel: SportsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
+
+    val contentType: SportsContentType = when (windowSize) {
+        WindowWidthSizeClass.Expanded -> {
+            SportsContentType.ListAndDetail
+        }
+        else -> {
+            SportsContentType.ListOnly
+        }
+    }
 
     Scaffold(
         topBar = {
             SportsAppBar(
                 isShowingListPage = uiState.isShowingListPage,
-                onBackButtonClick = { viewModel.navigateToListPage() }
+                onBackButtonClick = { viewModel.navigateToListPage() },
+                windowSize = windowSize,
             )
         }
     ) { innerPadding ->
-        if (uiState.isShowingListPage) {
-            SportsList(
+        if (contentType == SportsContentType.ListOnly) {
+            if (uiState.isShowingListPage) {
+                SportsList(
+                    sports = uiState.sportsList,
+                    onClick = {
+                        viewModel.updateCurrentSport(it)
+                        viewModel.navigateToDetailPage()
+                    },
+                    modifier = modifier.padding((innerPadding))
+                )
+            } else {
+                SportsDetail(
+                    selectedSport = uiState.currentSport,
+                    modifier = modifier.padding((innerPadding)),
+                    onBackPressed = {
+                        viewModel.navigateToListPage()
+                    }
+                )
+            }
+        } else {
+            SportsListAndDetail(
                 sports = uiState.sportsList,
                 onClick = {
                     viewModel.updateCurrentSport(it)
-                    viewModel.navigateToDetailPage()
                 },
-                modifier = modifier.padding((innerPadding))
-            )
-        } else {
-            SportsDetail(
                 selectedSport = uiState.currentSport,
-                modifier = modifier.padding((innerPadding)),
-                onBackPressed = {
-                    viewModel.navigateToListPage()
-                }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding((innerPadding))
             )
         }
+
     }
 }
 
@@ -96,12 +116,14 @@ fun SportsApp(
 fun SportsAppBar(
     onBackButtonClick: () -> Unit,
     isShowingListPage: Boolean,
+    windowSize: WindowWidthSizeClass,
     modifier: Modifier = Modifier
 ) {
+    val isShowingDetailPage = windowSize != WindowWidthSizeClass.Expanded && !isShowingListPage
     TopAppBar(
         title = {
             Text(
-                if (!isShowingListPage) {
+                if (!isShowingDetailPage) {
                     stringResource(R.string.news_fragment_label)
                 } else {
                     stringResource(R.string.list_fragment_label)
@@ -109,7 +131,7 @@ fun SportsAppBar(
             )
         },
         navigationIcon =
-        if (!isShowingListPage) {
+        if (!isShowingDetailPage) {
             {
                 IconButton(onClick = onBackButtonClick) {
                     Icon(
@@ -248,6 +270,27 @@ private fun SportsDetail(
     }
 }
 
+@Composable
+fun SportsListAndDetail(
+    sports: List<Sport>,
+    selectedSport: Sport,
+    onClick: (Sport) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val activity = LocalContext.current
+
+    Row(
+        modifier = modifier,
+    ) {
+        SportsList(sports = sports, onClick = onClick, modifier = Modifier.weight(2f))
+        SportsDetail(
+            selectedSport = selectedSport,
+            onBackPressed = { (activity as Activity).finish() },
+            modifier = Modifier.weight(3f)
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SportsListItemPreview() {
@@ -269,5 +312,17 @@ fun SportsListPreview() {
                 onClick = {}
             )
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 1000)
+@Composable
+fun SportsListAndDetail() {
+    SportsTheme {
+        SportsListAndDetail(
+            sports = LocalSportsDataProvider.getSportsData(),
+            selectedSport = LocalSportsDataProvider.defaultSport,
+            onClick = {}
+        )
     }
 }
